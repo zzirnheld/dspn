@@ -59,7 +59,7 @@ def main():
     )
     parser.add_argument(
         "--dataset",
-        choices=["mnist", "clevr-box", "clevr-state"],
+        choices=["mnist", "clevr-box", "clevr-state", "lhc"],
         help="Use MNIST dataset",
     )
     parser.add_argument(
@@ -143,6 +143,9 @@ def main():
     if args.dataset == "mnist":
         dataset_train = data.MNISTSet(train=True, full=args.full_eval)
         dataset_test = data.MNISTSet(train=False, full=args.full_eval)
+    elif args.dataset == "lhc":
+        dataset_train = data.LHCSet()
+        dataset_test = data.LHCSet()
     else:
         dataset_train = data.CLEVR(
             "clevr", "train", box=args.dataset == "clevr-box", full=args.full_eval

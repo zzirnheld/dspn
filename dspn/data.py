@@ -11,6 +11,7 @@ import torchvision.transforms.functional as T
 import h5py
 import numpy as np
 
+import pandas
 
 def get_loader(dataset, batch_size, num_workers=8, shuffle=True):
     return torch.utils.data.DataLoader(
@@ -22,6 +23,41 @@ def get_loader(dataset, batch_size, num_workers=8, shuffle=True):
         drop_last=True,
     )
 
+class LHCSet(torch.utils.data.Dataset):
+    def __init__(self):
+        data_path = '/home/zzirnhel/Desktop/events_LHCO2020_BlackBox1.h5'
+        label_path = '/home/zzirnhel/Desktop/events_LHCO2020_BlackBox1.masterkey'
+
+        self.data = self.cache(data_path, label_path)
+
+    def cache(self, data_path, label_path):
+        num_to_load = 1
+        df = pandas.read_hdf(data_path, stop=num_to_load)
+
+        label_file = open(label_path, 'r')
+        labels = label_file.readlines()
+        labels = [1 if l == '1.0\n' else 0 for l in labels]
+        label_file.close()
+
+        data = []
+
+        #iterate across dataframe
+        for i, row in df.iterrows():
+            point_set = torch.FloatTensor(row[:200]).unsqueeze(0)
+            label = labels[i]
+            _, cardinality = point_set.shape
+            data.append((point_set, label, cardinality))
+
+        return data
+
+    #needs to override __getitem__
+    def __getitem__(self, item):
+        s, l, c = self.data[item]
+        mask = torch.ones(c)
+        return l, s, mask
+
+    def __len__(self):
+        return len(self.data)
 
 class MNISTSet(torch.utils.data.Dataset):
     def __init__(self, threshold=0.0, train=True, root="mnist", full=False):
@@ -32,6 +68,13 @@ class MNISTSet(torch.utils.data.Dataset):
         transform = transforms.Compose(
             [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
         )
+
+        torchvision.datasets.MNIST.resources = [
+            ('https://ossci-datasets.s3.amazonaws.com/mnist/train-images-idx3-ubyte.gz', 'f68b3c2dcbeaaa9fbdd348bbdeb94873'),
+            ('https://ossci-datasets.s3.amazonaws.com/mnist/train-labels-idx1-ubyte.gz', 'd53e105ee54ea40749a09fcbcd1e9432'),
+            ('https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz', '9fb629c4189551a2d022fa330f9573f3'),
+            ('https://ossci-datasets.s3.amazonaws.com/mnist/t10k-labels-idx1-ubyte.gz', 'ec29112dd5afa0611ce80d1b7f02629c')
+        ]
         mnist = torchvision.datasets.MNIST(
             train=train, transform=transform, download=True, root=root
         )
@@ -49,6 +92,10 @@ class MNISTSet(torch.utils.data.Dataset):
             img, label = datapoint
             point_set, cardinality = self.image_to_set(img)
             data.append((point_set, label, cardinality))
+            print('set', point_set)
+            print(label)
+            print(cardinality)
+            raise Exception()
         torch.save(data, cache_path)
         print("Done!")
         return data
