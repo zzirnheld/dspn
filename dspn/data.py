@@ -39,10 +39,26 @@ class LHCSet(torch.utils.data.Dataset):
         labels = [1 if l == '1.0\n' else 0 for l in labels]
         label_file.close()
 
+        count = 0
+        true_labels = []
+        indices = {}
+        for label in labels:
+            if label == 1:
+                continue
+
+            true_labels.append(label)
+            indices[label] = True
+
+            count += 1
+            if count > 5000:
+                break
+
         data = []
 
         #iterate across dataframe
         for i, row in df.iterrows():
+            if i not in indices:
+                continue
             point_set = torch.FloatTensor(row[:600]).unsqueeze(0)
             label = labels[i]
             _, cardinality = point_set.shape
