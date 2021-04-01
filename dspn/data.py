@@ -31,7 +31,7 @@ class LHCSet(torch.utils.data.Dataset):
         self.data = self.cache(data_path, label_path)
 
     def cache(self, data_path, label_path):
-        num_to_load = 1
+        num_to_load = 5000
         df = pandas.read_hdf(data_path, stop=num_to_load)
 
         label_file = open(label_path, 'r')
@@ -43,7 +43,7 @@ class LHCSet(torch.utils.data.Dataset):
 
         #iterate across dataframe
         for i, row in df.iterrows():
-            point_set = torch.FloatTensor(row[:200]).unsqueeze(0)
+            point_set = torch.FloatTensor(row[:600]).unsqueeze(0)
             label = labels[i]
             _, cardinality = point_set.shape
             data.append((point_set, label, cardinality))
@@ -92,12 +92,14 @@ class MNISTSet(torch.utils.data.Dataset):
             img, label = datapoint
             point_set, cardinality = self.image_to_set(img)
             data.append((point_set, label, cardinality))
+            '''
             print('set', point_set)
             print(label)
             print(cardinality)
             raise Exception()
+            '''
         torch.save(data, cache_path)
-        print("Done!")
+        print("Done!", len(data), "datapoints.")
         return data
 
     def image_to_set(self, img):
