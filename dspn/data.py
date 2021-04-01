@@ -47,7 +47,7 @@ class LHCSet(torch.utils.data.Dataset):
                 continue
 
             true_labels.append(label)
-            indices[label] = True
+            indices[count] = True
 
             count += 1
             if count > 5000:
@@ -58,7 +58,7 @@ class LHCSet(torch.utils.data.Dataset):
         #iterate across dataframe
         for i, row in df.iterrows():
             if i not in indices:
-                print(i, type(i))
+                #print(i, type(i))
                 continue
             point_set = torch.FloatTensor(row[:600]).unsqueeze(0)
             label = labels[i]
