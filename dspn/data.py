@@ -43,7 +43,7 @@ class LHCSet(torch.utils.data.Dataset):
         true_labels = []
         indices = {}
         for label in labels:
-            if label == 1:
+            if label == 0:
                 continue
 
             true_labels.append(label)
