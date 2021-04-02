@@ -39,18 +39,14 @@ class LHCSet(torch.utils.data.Dataset):
         labels = [1 if l == '1.0\n' else 0 for l in labels]
         label_file.close()
 
-        count = 0
         true_labels = []
         indices = {}
-        for label in labels:
-            if label == 0:
-                continue
+        for index, label in enumerate(labels):
+            if label != 1:
+                true_labels.append(label)
+                indices[index] = True
 
-            true_labels.append(label)
-            indices[count] = True
-
-            count += 1
-            if count > 5000:
+            if index > 5000:
                 break
 
         data = []
