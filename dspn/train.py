@@ -391,8 +391,10 @@ def main():
                         fd.write(s + "\n")
 
         # export graph
+        fig = plt.figure()
         plt.scatter(steps, losses)
-        plt.show()
+        name = f"set/epoch-{epoch}/img-losses-{i}"
+        writer.add_figure(name, fig, global_step=0)
 
     import subprocess
 
