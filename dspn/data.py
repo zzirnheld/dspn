@@ -65,6 +65,8 @@ class LHCSet(torch.utils.data.Dataset):
             _, cardinality = point_set.shape
             data.append((point_set, label, cardinality))
 
+        print('finished with', len(data), 'sets')
+
         return data
 
     #needs to override __getitem__
