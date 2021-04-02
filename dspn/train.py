@@ -23,7 +23,6 @@ import track
 import model
 import utils
 
-
 def main():
     global net
     global test_loader
@@ -205,6 +204,9 @@ def main():
             ncols=0,
             desc="{1} E{0:02d}".format(epoch, "train" if train else "test "),
         )
+
+        losses = []
+        steps = []
         for i, sample in enumerate(loader, start=epoch * iters_per_epoch):
             # input is either a set or an image
             input, target_set, target_mask = map(lambda x: x.cuda(), sample)
@@ -259,6 +261,9 @@ def main():
                 loss.backward()
                 optimizer.step()
 
+            # loss value can be gotten as loss.item() for graphing purposes
+            steps.append(i)
+            losses.append(loss.item())
             # Tensorboard tracking of metrics for debugging
             tracked_last = tracker.update("{}_last".format(prefix), set_loss[-1].item())
             tracked_loss = tracker.update("{}_loss".format(prefix), loss.item())
@@ -384,6 +389,10 @@ def main():
                     for sbox in dets[-1].transpose(0, 1):
                         s = f"box " + " ".join(map(str, sbox.tolist()))
                         fd.write(s + "\n")
+
+        # export graph
+        plt.scatter(steps, losses)
+        plt.show()
 
     import subprocess
 
