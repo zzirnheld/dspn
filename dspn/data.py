@@ -62,7 +62,7 @@ class LHCSet(torch.utils.data.Dataset):
                 continue
 
             #check if the number of nonzero points is greater than a threshold. if not, throw it out.
-            for index in range(len(row) - 1, 0, -1):
+            for index in range(len(row) - 1, rowmax - 1, -1):
                 if row[index] != 0:
                     #print('nonzero at', index)
                     break
