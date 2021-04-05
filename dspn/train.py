@@ -371,7 +371,7 @@ def main():
         fig = plt.figure()
         plt.scatter(steps, losses)
         name = f"set/epoch-{epoch}/img-losses-{i}"
-        writer.add_figure(name, fig, global_step=0)
+        plt.savefig("losses.pdf", dpi=300)
 
         # Export predictions
         if args.export_dir:
