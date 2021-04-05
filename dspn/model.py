@@ -16,8 +16,8 @@ def build_net(args):
         set_channels = 2
         set_size = 342
     elif args.dataset == "lhc":
-        set_channels = 1 #i'm guessing this is how many rows there are in the tensor. TODO might make this 3, 1 for pt, eta, phi
-        set_size = 900
+        set_channels = 3 #i'm guessing this is how many rows there are in the tensor. TODO might make this 3, 1 for pt, eta, phi
+        set_size = 300
     elif args.dataset == "clevr-box":
         set_channels = 4
         set_size = 10

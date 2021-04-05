@@ -69,8 +69,8 @@ class LHCSet(torch.utils.data.Dataset):
             if index > rowmax:
                 continue
 
-            #point_set = torch.FloatTensor(row[:rowmax]).view(rowmax / 3, 3)
-            point_set = torch.FloatTensor(row[:rowmax]).unsqueeze(0)
+            point_set = torch.FloatTensor(row[:rowmax]).view(3, rowmax / 3)
+            #point_set = torch.FloatTensor(row[:rowmax]).unsqueeze(0)
             print('point set shape', point_set.shape)
             label = labels[i]
             _, cardinality = point_set.shape
