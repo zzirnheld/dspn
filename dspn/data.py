@@ -24,10 +24,11 @@ def get_loader(dataset, batch_size, num_workers=8, shuffle=True):
     )
 
 class LHCSet(torch.utils.data.Dataset):
-    def __init__(self):
+    def __init__(self, train=True):
         data_path = '/home/zzirnhel/Desktop/events_LHCO2020_BlackBox1.h5'
         label_path = '/home/zzirnhel/Desktop/events_LHCO2020_BlackBox1.masterkey'
 
+        self.train = train
         self.data = self.cache(data_path, label_path)
 
     def cache(self, data_path, label_path):
@@ -41,29 +42,34 @@ class LHCSet(torch.utils.data.Dataset):
 
         true_labels = []
         indices = {}
+        desired_label = 0
         for index, label in enumerate(labels):
-            if label != 1:
+            if label == desired_label:
                 true_labels.append(label)
                 indices[index] = True
 
-            if index > 5000:
+            if index > num_to_load:
                 break
 
         data = []
 
+        rowmax = 900
         #iterate across dataframe
         for i, row in df.iterrows():
+            # don't include things with the wrong label
             if i not in indices:
                 #print(i, type(i))
                 continue
+
+            #check if the number of nonzero points is greater than a threshold. if not, throw it out.
             for index in range(len(row) - 1, 0, -1):
                 if row[index] != 0:
                     #print('nonzero at', index)
                     break
-            if index > 600:
+            if index > rowmax:
                 continue
 
-            point_set = torch.FloatTensor(row[:600]).unsqueeze(0)
+            point_set = torch.FloatTensor(row[:rowmax]).unsqueeze(0)
             label = labels[i]
             _, cardinality = point_set.shape
             data.append((point_set, label, cardinality))
