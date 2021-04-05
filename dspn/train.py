@@ -366,6 +366,13 @@ def main():
                         plt.ylim(0, 1)
                         writer.add_figure(tag_name, fig, global_step=j)
 
+
+        # create graph
+        fig = plt.figure()
+        plt.scatter(steps, losses)
+        name = f"set/epoch-{epoch}/img-losses-{i}"
+        writer.add_figure(name, fig, global_step=0)
+
         # Export predictions
         if args.export_dir:
             os.makedirs(f"{args.export_dir}/groundtruths", exist_ok=True)
@@ -389,12 +396,6 @@ def main():
                     for sbox in dets[-1].transpose(0, 1):
                         s = f"box " + " ".join(map(str, sbox.tolist()))
                         fd.write(s + "\n")
-
-        # export graph
-        fig = plt.figure()
-        plt.scatter(steps, losses)
-        name = f"set/epoch-{epoch}/img-losses-{i}"
-        writer.add_figure(name, fig, global_step=0)
 
     import subprocess
 

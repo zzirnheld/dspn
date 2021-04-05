@@ -31,7 +31,7 @@ class LHCSet(torch.utils.data.Dataset):
         self.data = self.cache(data_path, label_path)
 
     def cache(self, data_path, label_path):
-        num_to_load = 5000
+        num_to_load = 10000
         df = pandas.read_hdf(data_path, stop=num_to_load)
 
         label_file = open(label_path, 'r')
@@ -56,6 +56,13 @@ class LHCSet(torch.utils.data.Dataset):
             if i not in indices:
                 #print(i, type(i))
                 continue
+            for index in range(len(row) - 1, 0, -1):
+                if row[index] != 0:
+                    print('nonzero at', index)
+                    break
+            if index > 600:
+                continue
+
             point_set = torch.FloatTensor(row[:600]).unsqueeze(0)
             label = labels[i]
             _, cardinality = point_set.shape
