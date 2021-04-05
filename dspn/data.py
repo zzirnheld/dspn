@@ -58,7 +58,7 @@ class LHCSet(torch.utils.data.Dataset):
                 continue
             for index in range(len(row) - 1, 0, -1):
                 if row[index] != 0:
-                    print('nonzero at', index)
+                    #print('nonzero at', index)
                     break
             if index > 600:
                 continue
