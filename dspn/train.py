@@ -370,8 +370,8 @@ def main():
         # create graph
         fig = plt.figure()
         plt.scatter(steps, losses)
-        name = f"set/epoch-{epoch}/img-losses-{i}"
-        plt.savefig("losses.pdf", dpi=300)
+        name = f"img-losses-epoch-{epoch}-train-{'train' if train else 'test'}"
+        plt.savefig(name, dpi=300)
 
         # Export predictions
         if args.export_dir:
