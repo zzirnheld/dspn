@@ -14,7 +14,7 @@ import numpy as np
 import pandas
 
 def get_loader(dataset, batch_size, num_workers=8, shuffle=True):
-    return torch.utils.data.DataLoader(
+    dl = torch.utils.data.DataLoader(
         dataset,
         shuffle=shuffle,
         batch_size=batch_size,
@@ -22,6 +22,10 @@ def get_loader(dataset, batch_size, num_workers=8, shuffle=True):
         num_workers=num_workers,
         drop_last=True,
     )
+
+    print(f'datatset len: {len(dataset)}, dataloader len: {len(dl)}')
+
+    return dl
 
 class LHCSet(torch.utils.data.Dataset):
     def __init__(self, train=True):
