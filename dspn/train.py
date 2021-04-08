@@ -22,6 +22,7 @@ import data
 import track
 import model
 import utils
+import math
 
 def main():
     global net
@@ -198,7 +199,7 @@ def main():
             true_export = []
             pred_export = []
 
-        iters_per_epoch = len(loader)
+        iters_per_epoch = len(loader) #len(loader) is # batches, which is len(dataset)/batch size (which is an arg)
         loader = tqdm(
             loader,
             ncols=0,
@@ -397,19 +398,23 @@ def main():
                         s = f"box " + " ".join(map(str, sbox.tolist()))
                         fd.write(s + "\n")
 
+        return np.mean(losses)
+
     import subprocess
 
     git_hash = subprocess.check_output(["git", "rev-parse", "HEAD"])
 
     torch.backends.cudnn.benchmark = True
 
+    epoch_losses = []
+
     for epoch in range(args.epochs):
         tracker.new_epoch()
         with mp.Pool(10) as pool:
             if not args.eval_only:
-                run(net, train_loader, optimizer, train=True, epoch=epoch, pool=pool)
+                e_loss = run(net, train_loader, optimizer, train=True, epoch=epoch, pool=pool)
             if not args.train_only:
-                run(net, test_loader, optimizer, train=False, epoch=epoch, pool=pool)
+                e_loss = run(net, test_loader, optimizer, train=False, epoch=epoch, pool=pool)
 
         results = {
             "name": args.name,
@@ -423,6 +428,11 @@ def main():
         torch.save(results, os.path.join("logs", args.name))
         if args.eval_only:
             break
+
+    fig = plt.figure()
+    plt.scatter(range(args.epochs), epoch_losses)
+    name = f"img-losses-per-epoch-train-{'train' if not args.eval_only else 'test'}"
+    plt.savefig(name, dpi=300)
 
 
 if __name__ == "__main__":
