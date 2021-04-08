@@ -413,6 +413,7 @@ def main():
         with mp.Pool(10) as pool:
             if not args.eval_only:
                 e_loss = run(net, train_loader, optimizer, train=True, epoch=epoch, pool=pool)
+                epoch_losses.append(e_loss)
             if not args.train_only:
                 e_loss = run(net, test_loader, optimizer, train=False, epoch=epoch, pool=pool)
 
