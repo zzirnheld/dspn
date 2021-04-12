@@ -372,7 +372,7 @@ def main():
 
 
         #create scatter of encoded points?
-        print(encodings[0:5])
+        print([t.shape for t in encodings[0:5]])
 
 
         # create graph
