@@ -373,6 +373,14 @@ def main():
 
         #create scatter of encoded points?
         print([t.shape for t in encodings[0:5]])
+        #get the first latent dimension, and plot that
+        first_latent_dim = [t[0] for t in encodings]
+        first_latent_dim_as_list = [i, e for i, e in enumerate(first_latent_dim)]
+        fig = plt.figure()
+        plt.scatter(zip(first_latent_dim_as_list))
+        name = f'img-latent-epoch-{epoch}-{"train" if train else "test"}'
+        plt.savefig(name, dpi=300)
+        plt.close(fig)
 
 
         # create graph
@@ -380,6 +388,7 @@ def main():
         plt.scatter(steps, losses)
         name = f"img-losses-epoch-{epoch}-train-{'train' if train else 'test'}"
         plt.savefig(name, dpi=300)
+        plt.close(fig)
 
         # Export predictions
         if args.export_dir:
