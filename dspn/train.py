@@ -377,6 +377,7 @@ def main():
         first_latent_dim = [t[0] for t in encodings]
         first_latent_dim_as_list = [tup for tup in enumerate(first_latent_dim)]
         fig = plt.figure()
+        print(first_latent_dim_as_list[0:5])
         plt.scatter(zip(first_latent_dim_as_list))
         name = f'img-latent-epoch-{epoch}-{"train" if train else "test"}'
         plt.savefig(name, dpi=300)
