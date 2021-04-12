@@ -371,10 +371,12 @@ def main():
                         writer.add_figure(tag_name, fig, global_step=j)
 
 
+
+
         #create scatter of encoded points?
         print([t.shape for t in encodings[0:5]])
         #get the first latent dimension, and plot that
-        first_latent_dim = [t.detach().cpu()[0] for t in encodings]
+        first_latent_dim = [t.detach().cpu()[0] for t in encodings[100:]]
         numbers = list(range(len(first_latent_dim[0]))) * len(first_latent_dim)
         first_latent_dim_as_list = []
         for tensor in first_latent_dim:
@@ -384,6 +386,7 @@ def main():
         print(len(numbers))
         print(len(first_latent_dim_as_list))
         fig = plt.figure()
+        plt.yscale('log')
         #print(first_latent_dim[0:5])
         plt.scatter(numbers, first_latent_dim_as_list)
         name = f'img-latent-epoch-{epoch}-{"train" if train else "test"}'
@@ -393,6 +396,7 @@ def main():
 
         # create graph
         fig = plt.figure()
+        plt.yscale('linear')
         plt.scatter(steps, losses)
         name = f"img-losses-epoch-{epoch}-train-{'train' if train else 'test'}"
         plt.savefig(name, dpi=300)
