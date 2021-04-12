@@ -23,6 +23,7 @@ import track
 import model
 import utils
 import math
+import pickle
 
 def main():
     global net
@@ -208,6 +209,7 @@ def main():
 
         losses = []
         steps = []
+        encodings = []
         for i, sample in enumerate(loader, start=epoch * iters_per_epoch):
             # input is either a set or an image
             input, target_set, target_mask = map(lambda x: x.cuda(), sample)
@@ -217,6 +219,7 @@ def main():
                 input, target_set, target_mask
             )
 
+            encodings.append(y_enc)
             progress_only = progress
 
             # if using mask as feature, concat mask feature into progress
@@ -366,6 +369,10 @@ def main():
                         plt.xlim(0, 1)
                         plt.ylim(0, 1)
                         writer.add_figure(tag_name, fig, global_step=j)
+
+
+        #create scatter of encoded points?
+        print(encodings[0:5])
 
 
         # create graph
