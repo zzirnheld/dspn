@@ -375,10 +375,17 @@ def main():
         print([t.shape for t in encodings[0:5]])
         #get the first latent dimension, and plot that
         first_latent_dim = [t[0] for t in encodings]
-        first_latent_dim_as_list = list(zip([tup for tup in enumerate(first_latent_dim)]))
+        numbers = list(range(len(first_latent_dim[0]))) * len(first_latent_dim)
+        first_latent_dim_as_list = []
+        for tensor in first_latent_dim:
+            for entry in tensor:
+                first_latent_dim_as_list.append(entry)
+        
+        print(len(numbers))
+        print(len(first_latent_dim_as_list))
         fig = plt.figure()
-        print(first_latent_dim_as_list[0:5])
-        plt.scatter(first_latent_dim_as_list)
+        #print(first_latent_dim[0:5])
+        plt.scatter(numbers, first_latent_dim_as_list)
         name = f'img-latent-epoch-{epoch}-{"train" if train else "test"}'
         plt.savefig(name, dpi=300)
         plt.close(fig)
