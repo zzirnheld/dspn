@@ -374,7 +374,7 @@ def main():
         #create scatter of encoded points?
         print([t.shape for t in encodings[0:5]])
         #get the first latent dimension, and plot that
-        first_latent_dim = [t.cpu()[0] for t in encodings]
+        first_latent_dim = [t.detach().cpu()[0] for t in encodings]
         numbers = list(range(len(first_latent_dim[0]))) * len(first_latent_dim)
         first_latent_dim_as_list = []
         for tensor in first_latent_dim:
