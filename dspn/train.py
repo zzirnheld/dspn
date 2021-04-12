@@ -386,7 +386,7 @@ def main():
         print(len(numbers))
         print(len(first_latent_dim_as_list))
         fig = plt.figure()
-        plt.yscale('log')
+        #plt.yscale('log')
         #print(first_latent_dim[0:5])
         plt.scatter(numbers, first_latent_dim_as_list)
         name = f'img-latent-epoch-{epoch}-{"train" if train else "test"}'
@@ -396,7 +396,7 @@ def main():
 
         # create graph
         fig = plt.figure()
-        plt.yscale('linear')
+        #plt.yscale('linear')
         plt.scatter(steps, losses)
         name = f"img-losses-epoch-{epoch}-train-{'train' if train else 'test'}"
         plt.savefig(name, dpi=300)
