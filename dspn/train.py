@@ -219,7 +219,7 @@ def main():
                 input, target_set, target_mask
             )
 
-            encodings.append(y_enc)
+            encodings.append(y_label)
             progress_only = progress
 
             # if using mask as feature, concat mask feature into progress
