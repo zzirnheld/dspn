@@ -505,7 +505,7 @@ def main():
     fig = plt.figure()
     set_encoding_in_hidden_dim_train = torch.cat(train_encodings, dim = 0).detach().cpu()
     set_encoding_in_hidden_dim_test = torch.cat(test_encodings, dim = 0).detach().cpu()
-    set_encoding_in_hidden_dim = torch.cat((set_encoding_in_hidden_dim_train, set_encoding_in_hidden_dim_test), dim = 0)
+    set_encoding_in_hidden_dim = torch.cat((set_encoding_in_hidden_dim_test, set_encoding_in_hidden_dim_train), dim = 0)
 
     set_encoding_tsne = tsne.fit_transform(set_encoding_in_hidden_dim)
     set_encoding_tsne_x_train = set_encoding_tsne[num_test:, 0]
