@@ -487,7 +487,7 @@ def main():
             )
             train_encodings.append(y_label)
         test_encodings = []
-        for i, sample in enumerate(train_loader):
+        for i, sample in enumerate(test_loader):
             # input is either a set or an image
             input, target_set, target_mask = map(lambda x: x.cuda(), sample)
 
