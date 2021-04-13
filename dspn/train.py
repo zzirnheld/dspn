@@ -500,7 +500,7 @@ def main():
     #create scatter of encoded points, put through tsne
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
     tsne = TSNE(n_components = 2)
-    num_test = len(test_encodings)
+    num_test = len(test_encodings) * args.batch_size
 
     fig = plt.figure()
     set_encoding_in_hidden_dim_train = torch.cat(train_encodings, dim = 0).detach().cpu()
