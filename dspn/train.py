@@ -500,16 +500,20 @@ def main():
     #create scatter of encoded points, put through tsne
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
     tsne = TSNE(n_components = 2)
+    num_test = len(test_encodings)
+
     fig = plt.figure()
     set_encoding_in_hidden_dim_train = torch.cat(train_encodings, dim = 0).detach().cpu()
-    set_encoding_tsne_train = tsne.fit_transform(set_encoding_in_hidden_dim_train)
-    set_encoding_tsne_x_train = set_encoding_tsne_train[:, 0]
-    set_encoding_tsne_y_train = set_encoding_tsne_train[:, 1]
-    plt.scatter(set_encoding_tsne_x_train, set_encoding_tsne_y_train)
     set_encoding_in_hidden_dim_test = torch.cat(test_encodings, dim = 0).detach().cpu()
-    set_encoding_tsne_test = tsne.fit_transform(set_encoding_in_hidden_dim_test)
-    set_encoding_tsne_x_test = set_encoding_tsne_test[:, 0]
-    set_encoding_tsne_y_test = set_encoding_tsne_test[:, 1]
+    set_encoding_in_hidden_dim = torch.cat((set_encoding_in_hidden_dim_train, set_encoding_in_hidden_dim_test), dim = 0)
+
+    set_encoding_tsne = tsne.fit(set_encoding_in_hidden_dim)
+    set_encoding_tsne_x_train = set_encoding_tsne[num_test:, 0]
+    set_encoding_tsne_y_train = set_encoding_tsne[num_test:, 1]
+    set_encoding_tsne_x_test = set_encoding_tsne[:num_test, 0]
+    set_encoding_tsne_y_test = set_encoding_tsne[:num_test, 1]
+
+    plt.scatter(set_encoding_tsne_x_train, set_encoding_tsne_y_train)
     plt.scatter(set_encoding_tsne_x_test, set_encoding_tsne_y_test)
     name = f'img-latent'
     plt.savefig(name, dpi=300)

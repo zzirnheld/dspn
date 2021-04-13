@@ -37,7 +37,7 @@ class LHCSet(torch.utils.data.Dataset):
 
     def cache(self, data_path, label_path):
         df_interval = 10000
-        num_to_load = 10000 if self.train else 100
+        num_to_load = 10000 if self.train else 200
 
         label_file = open(label_path, 'r')
         labels = label_file.readlines()
