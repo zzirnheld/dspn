@@ -475,26 +475,27 @@ def main():
 
     #plot encoding/decoding
     #train loader is bkdg points, test loader is signal points
-    train_encodings = []
-    for i, sample in enumerate(train_loader):
-        # input is either a set or an image
-        input, target_set, target_mask = map(lambda x: x.cuda(), sample)
+    with mp.Pool(10) as pool:
+        train_encodings = []
+        for i, sample in enumerate(train_loader):
+            # input is either a set or an image
+            input, target_set, target_mask = map(lambda x: x.cuda(), sample)
 
-        # forward evaluation through the network
-        (progress, masks, evals, gradn), (y_enc, y_label) = net(
-            input, target_set, target_mask
-        )
-        train_encodings.appent(y_label)
-    test_encodings = []
-    for i, sample in enumerate(train_loader):
-        # input is either a set or an image
-        input, target_set, target_mask = map(lambda x: x.cuda(), sample)
+            # forward evaluation through the network
+            (progress, masks, evals, gradn), (y_enc, y_label) = net(
+                input, target_set, target_mask
+            )
+            train_encodings.appent(y_label)
+        test_encodings = []
+        for i, sample in enumerate(train_loader):
+            # input is either a set or an image
+            input, target_set, target_mask = map(lambda x: x.cuda(), sample)
 
-        # forward evaluation through the network
-        (progress, masks, evals, gradn), (y_enc, y_label) = net(
-            input, target_set, target_mask
-        )
-        test_encodings.appent(y_label)
+            # forward evaluation through the network
+            (progress, masks, evals, gradn), (y_enc, y_label) = net(
+                input, target_set, target_mask
+            )
+            test_encodings.appent(y_label)
 
     #create scatter of encoded points, put through tsne
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
