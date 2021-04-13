@@ -36,14 +36,15 @@ class LHCSet(torch.utils.data.Dataset):
         self.data = self.cache(data_path, label_path)
 
     def cache(self, data_path, label_path):
-        num_to_load = 1000
+        df_interval = 10000
+        num_to_load = 10000 if self.train else 100
 
         label_file = open(label_path, 'r')
         labels = label_file.readlines()
         labels = [1 if l == '1.0\n' else 0 for l in labels]
         label_file.close()
 
-        desired_label = 1 if self.train else 0
+        desired_label = 0 if self.train else 1
         desired_labels = []
         for i, l in enumerate(labels):
             if l == desired_label:
@@ -61,12 +62,12 @@ class LHCSet(torch.utils.data.Dataset):
         #iterate across dataframe
         for i in desired_labels:
             while currmax < i:
-                print(f'loading pandas df from {currmax} to {currmax + num_to_load}')
-                df = pandas.read_hdf(data_path, start=currmax, stop=currmax + num_to_load)
+                print(f'loading pandas df from {currmax} to {currmax + df_interval}')
+                df = pandas.read_hdf(data_path, start=currmax, stop=currmax + df_interval)
                 print('loaded pandas df')
-                currmax += num_to_load
+                currmax += df_interval
             
-            index = i + num_to_load - currmax
+            index = i + df_interval - currmax
             row = df.iloc[index]
 
             #check if the number of nonzero points is greater than a threshold. if not, throw it out.
