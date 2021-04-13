@@ -399,7 +399,7 @@ def main():
 
         #create scatter of encoded points, put through tsne
         # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
-        set_encoding_in_hidden_dim = torch.stack(encodings).detach().cpu()
+        set_encoding_in_hidden_dim = torch.cat(encodings, dim = 0).detach().cpu()
         set_encoding_tsne = TSNE(n_components = 2).fit_transform(set_encoding_in_hidden_dim)
         set_encoding_tsne_x = set_encoding_tsne[:, 0]
         set_encoding_tsne_y = set_encoding_tsne[:, 1]
