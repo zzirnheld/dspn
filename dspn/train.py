@@ -473,6 +473,47 @@ def main():
         if args.eval_only:
             break
 
+    #plot encoding/decoding
+    #train loader is bkdg points, test loader is signal points
+    train_encodings = []
+    for i, sample in enumerate(train_loader):
+        # input is either a set or an image
+        input, target_set, target_mask = map(lambda x: x.cuda(), sample)
+
+        # forward evaluation through the network
+        (progress, masks, evals, gradn), (y_enc, y_label) = net(
+            input, target_set, target_mask
+        )
+        train_encodings.appent(y_label)
+    test_encodings = []
+    for i, sample in enumerate(train_loader):
+        # input is either a set or an image
+        input, target_set, target_mask = map(lambda x: x.cuda(), sample)
+
+        # forward evaluation through the network
+        (progress, masks, evals, gradn), (y_enc, y_label) = net(
+            input, target_set, target_mask
+        )
+        test_encodings.appent(y_label)
+
+    #create scatter of encoded points, put through tsne
+    # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
+    tsne = TSNE(n_components = 2)
+    fig = plt.figure()
+    set_encoding_in_hidden_dim_train = torch.cat(train_encodings, dim = 0).detach().cpu()
+    set_encoding_tsne_train = tsne.fit_transform(set_encoding_in_hidden_dim_train)
+    set_encoding_tsne_x_train = set_encoding_tsne_train[:, 0]
+    set_encoding_tsne_y_train = set_encoding_tsne_train[:, 1]
+    plt.scatter(set_encoding_tsne_x_train, set_encoding_tsne_y_train)
+    set_encoding_in_hidden_dim_test = torch.cat(test_encodings, dim = 0).detach().cpu()
+    set_encoding_tsne_test = tsne.fit_transform(set_encoding_in_hidden_dim_test)
+    set_encoding_tsne_x_test = set_encoding_tsne_test[:, 0]
+    set_encoding_tsne_y_test = set_encoding_tsne_test[:, 1]
+    plt.scatter(set_encoding_tsne_x_test, set_encoding_tsne_y_test)
+    name = f'img-latent'
+    plt.savefig(name, dpi=300)
+    plt.close(fig)
+
     fig = plt.figure()
     plt.scatter(range(args.epochs), epoch_losses)
     name = f"img-losses-per-epoch-train-{'train' if not args.eval_only else 'test'}"

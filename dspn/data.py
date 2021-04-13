@@ -61,7 +61,7 @@ class LHCSet(torch.utils.data.Dataset):
         currmax = 0
         #iterate across dataframe
         for i in desired_labels:
-            while currmax < i:
+            while currmax - 1 < i:
                 print(f'loading pandas df from {currmax} to {currmax + df_interval}')
                 df = pandas.read_hdf(data_path, start=currmax, stop=currmax + df_interval)
                 print('loaded pandas df')
