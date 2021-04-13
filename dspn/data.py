@@ -37,9 +37,6 @@ class LHCSet(torch.utils.data.Dataset):
 
     def cache(self, data_path, label_path):
         num_to_load = 1000
-        print('loading pandas df')
-        df = pandas.read_hdf(data_path)
-        print('loaded pandas df')
 
         label_file = open(label_path, 'r')
         labels = label_file.readlines()
@@ -60,9 +57,17 @@ class LHCSet(torch.utils.data.Dataset):
         data = []
 
         rowmax = 900
+        currmax = 0
         #iterate across dataframe
         for i in desired_labels:
-            row = df[i]
+            while currmax < i:
+                print(f'loading pandas df from {currmax} to {currmax + num_to_load}')
+                df = pandas.read_hdf(data_path, start=currmax, stop=currmax + num_to_load)
+                print('loaded pandas df')
+                currmax += num_to_load
+            
+            index = i + num_to_load - currmax
+            row = df.iloc[index]
 
             #check if the number of nonzero points is greater than a threshold. if not, throw it out.
             for index in range(len(row) - 1, rowmax - 1, -1):
@@ -75,7 +80,7 @@ class LHCSet(torch.utils.data.Dataset):
             point_set = torch.FloatTensor(row[:rowmax]).view((3, rowmax // 3))
             #point_set = torch.FloatTensor(row[:rowmax]).unsqueeze(0)
             #print('point set shape', point_set.shape)
-            label = labels[i]
+            label = desired_label
             _, cardinality = point_set.shape
             data.append((point_set, label, cardinality))
 

@@ -147,8 +147,8 @@ def main():
         dataset_train = data.MNISTSet(train=True, full=args.full_eval)
         dataset_test = data.MNISTSet(train=False, full=args.full_eval)
     elif args.dataset == "lhc":
-        dataset_train = data.LHCSet()
-        dataset_test = data.LHCSet()
+        dataset_train = data.LHCSet(train=True)
+        dataset_test = data.LHCSet(train=False)
     else:
         dataset_train = data.CLEVR(
             "clevr", "train", box=args.dataset == "clevr-box", full=args.full_eval
