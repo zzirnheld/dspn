@@ -507,7 +507,7 @@ def main():
     set_encoding_in_hidden_dim_test = torch.cat(test_encodings, dim = 0).detach().cpu()
     set_encoding_in_hidden_dim = torch.cat((set_encoding_in_hidden_dim_train, set_encoding_in_hidden_dim_test), dim = 0)
 
-    set_encoding_tsne = tsne.fit(set_encoding_in_hidden_dim)
+    set_encoding_tsne = tsne.fit_transform(set_encoding_in_hidden_dim)
     set_encoding_tsne_x_train = set_encoding_tsne[num_test:, 0]
     set_encoding_tsne_y_train = set_encoding_tsne[num_test:, 1]
     set_encoding_tsne_x_test = set_encoding_tsne[:num_test, 0]
@@ -515,7 +515,7 @@ def main():
 
     plt.scatter(set_encoding_tsne_x_train, set_encoding_tsne_y_train)
     plt.scatter(set_encoding_tsne_x_test, set_encoding_tsne_y_test)
-    name = f'img-latent'
+    name = f'img-latent-NEW'
     plt.savefig(name, dpi=300)
     plt.close(fig)
 
