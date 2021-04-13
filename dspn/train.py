@@ -485,7 +485,7 @@ def main():
             (progress, masks, evals, gradn), (y_enc, y_label) = net(
                 input, target_set, target_mask
             )
-            train_encodings.appent(y_label)
+            train_encodings.append(y_label)
         test_encodings = []
         for i, sample in enumerate(train_loader):
             # input is either a set or an image
@@ -495,7 +495,7 @@ def main():
             (progress, masks, evals, gradn), (y_enc, y_label) = net(
                 input, target_set, target_mask
             )
-            test_encodings.appent(y_label)
+            test_encodings.append(y_label)
 
     #create scatter of encoded points, put through tsne
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
