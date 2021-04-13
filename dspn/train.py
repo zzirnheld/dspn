@@ -25,6 +25,8 @@ import utils
 import math
 import pickle
 
+from sklearn.manifold import TSNE
+
 def main():
     global net
     global test_loader
@@ -375,6 +377,7 @@ def main():
 
         #create scatter of encoded points?
         print([t.shape for t in encodings[0:5]])
+        '''
         #get the first latent dimension, and plot that
         first_latent_dim = [t.detach().cpu()[0] for t in encodings[100:]]
         numbers = list(range(len(first_latent_dim[0]))) * len(first_latent_dim)
@@ -392,7 +395,19 @@ def main():
         name = f'img-latent-epoch-{epoch}-{"train" if train else "test"}'
         plt.savefig(name, dpi=300)
         plt.close(fig)
+        '''
 
+        #create scatter of encoded points, put through tsne
+        # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
+        set_encoding_in_hidden_dim = torch.stack(encodings).detach().cpu()
+        set_encoding_tsne = TSNE(n_components = 2).fit_transform(set_encoding_in_hidden_dim)
+        set_encoding_tsne_x = set_encoding_tsne[:, 0]
+        set_encoding_tsne_y = set_encoding_tsne[:, 1]
+        fig = plt.figure()
+        plt.scatter(set_encoding_tsne_x, set_encoding_tsne_y)
+        name = f'img-latent-epoch-{epoch}-{"train" if train else "test"}'
+        plt.savefig(name, dpi=300)
+        plt.close(fig)
 
         # create graph
         fig = plt.figure()
