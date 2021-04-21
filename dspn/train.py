@@ -515,7 +515,6 @@ def main():
     train_encodings_tensor = torch.cat((bkgd_train_encodings_tensor, sign_train_encodings_tensor)).to('cuda:0')
     train_encodings_tensor_copy = torch.tensor(train_encodings_tensor, requires_grad=True).to('cuda:0')
     train_labels_tensor = torch.cat((bkgd_train_encoding_label_tensor, sign_train_encoding_label_tensor)).to('cuda:0')
-    train_labels_tensor_copy = torch.tensor(train_labels_tensor, requires_grad=True).to('cuda:0')
 
     bkgd_test_encodings_tensor = torch.cat(train_encodings[-num_bkdg_val:])
     sign_test_encodings_tensor = torch.cat(test_encodings[-num_sign_val:])
@@ -525,7 +524,6 @@ def main():
     test_encodings_tensor = torch.cat((bkgd_test_encodings_tensor, sign_test_encodings_tensor)).to('cuda:0')
     test_encodings_tensor_copy = torch.tensor(test_encodings_tensor, requires_grad=True).to('cuda:0')
     test_labels_tensor = torch.cat((bkgd_test_encoding_label_tensor, sign_test_encoding_label_tensor)).to('cuda:0')
-    test_labels_tensor_copy = torch.tensor(test_labels_tensor, requires_grad=True).to('cuda:0')
 
     _, encoding_len = y_label.shape
     mlp = dummymlp.MLP(embedding_dim=encoding_len, hidden_dim=20, label_dim=2).to('cuda:0')
@@ -536,7 +534,7 @@ def main():
     for epoch in range(epochs):
         mlp.zero_grad()
         output = mlp(train_encodings_tensor_copy)
-        loss = loss_func(output, train_labels_tensor_copy)
+        loss = loss_func(output, train_labels_tensor)
         loss.backward()
 
     #test
@@ -544,7 +542,7 @@ def main():
     test_output = mlp(test_encodings_tensor_copy)
     argmaxed_test_output = torch.argmax(test_output, dim=1)
     total = argmaxed_test_output.size(0)
-    correct = (argmaxed_test_output == test_labels_tensor_copy).sum().item()
+    correct = (argmaxed_test_output == test_labels_tensor).sum().item()
 
     print(f'acc = {correct / total}')
 
