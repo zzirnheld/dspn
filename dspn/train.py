@@ -509,16 +509,16 @@ def main():
     num_sign_val = len(test_encodings) // 3
     bkgd_train_encodings_tensor = torch.cat(train_encodings[:-num_bkdg_val], dim = 0)
     sign_train_encodings_tensor = torch.cat(test_encodings[:-num_sign_val], dim = 0)
-    bkgd_train_encoding_label_tensor = torch.zeros((len(train_encodings) - num_bkdg_val) * args.batch_size)
-    sign_train_encoding_label_tensor = torch.ones((len(test_encodings) - num_sign_val) * args.batch_size)
+    bkgd_train_encoding_label_tensor = torch.zeros((len(train_encodings) - num_bkdg_val) * args.batch_size, dtype=torch.long)
+    sign_train_encoding_label_tensor = torch.ones((len(test_encodings) - num_sign_val) * args.batch_size, dtype=torch.long)
 
     train_encodings_tensor = torch.cat((bkgd_train_encodings_tensor, sign_train_encodings_tensor)).to('cuda:0')
     train_labels_tensor = torch.cat((bkgd_train_encoding_label_tensor, sign_train_encoding_label_tensor)).to('cuda:0')
 
     bkgd_test_encodings_tensor = torch.cat(train_encodings[-num_bkdg_val:])
     sign_test_encodings_tensor = torch.cat(test_encodings[-num_sign_val:])
-    bkgd_test_encoding_label_tensor = torch.zeros((num_bkdg_val) * args.batch_size)
-    sign_test_encoding_label_tensor = torch.ones((num_sign_val) * args.batch_size)
+    bkgd_test_encoding_label_tensor = torch.zeros((num_bkdg_val) * args.batch_size, dtype=torch.long)
+    sign_test_encoding_label_tensor = torch.ones((num_sign_val) * args.batch_size, dtype=torch.long)
 
     test_encodings_tensor = torch.cat((bkgd_test_encodings_tensor, sign_test_encodings_tensor)).to('cuda:0')
     test_labels_tensor = torch.cat((bkgd_test_encoding_label_tensor, sign_test_encoding_label_tensor)).to('cuda:0')
