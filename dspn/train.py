@@ -3,6 +3,7 @@ import argparse
 from datetime import datetime
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 import torchvision.transforms as transforms
@@ -24,6 +25,8 @@ import model
 import utils
 import math
 import pickle
+
+import dummymlp
 
 from sklearn.manifold import TSNE
 
@@ -496,6 +499,51 @@ def main():
                 input, target_set, target_mask
             )
             test_encodings.append(y_label)
+
+
+
+    #recall: "train" is actually just bkgd and "test" is really just signal,
+    #because we're trying to learn the background distribution and then encode signal points in the same way, and see what happens
+    #so train an MLP and see if it can distinguish
+    num_bkdg_val = len(train_encodings) // 3
+    num_sign_val = len(test_encodings) // 3
+    bkgd_train_encodings_tensor = torch.stack(train_encodings[:-num_bkdg_val])
+    sign_train_encodings_tensor = torch.stack(test_encodings[:-num_sign_val])
+    bkgd_train_encoding_label_tensor = torch.zeros(len(train_encodings) - num_bkdg_val)
+    sign_train_encoding_label_tensor = torch.ones(len(test_encodings) - num_sign_val)
+
+    train_encodings_tensor = torch.cat((bkgd_train_encodings_tensor, sign_train_encodings_tensor))
+    train_labels_tensor = torch.cat((bkgd_train_encoding_label_tensor, sign_train_encoding_label_tensor))
+
+    bkgd_test_encodings_tensor = torch.stack(train_encodings[-num_bkdg_val:])
+    sign_test_encodings_tensor = torch.stack(test_encodings[-num_sign_val:])
+    bkgd_test_encoding_label_tensor = torch.zeros(num_bkdg_val)
+    sign_test_encoding_label_tensor = torch.ones(num_sign_val)
+
+    test_encodings_tensor = torch.cat((bkgd_test_encodings_tensor, sign_test_encodings_tensor))
+    test_labels_tensor = torch.cat((bkgd_test_encoding_label_tensor, sign_test_encoding_label_tensor))
+
+    encoding_len, = y_label.shape
+    mlp = dummymlp.MLP(embedding_dim=encoding_len, hidden_dim=20, label_dim=2)
+    loss_func = nn.CrossEntropyLoss()
+    mlp.train()
+
+    epochs = 20
+    for epoch in range(epochs):
+        mlp.zero_grad()
+        output = mlp(train_encodings_tensor)
+        loss = loss_func(output, train_labels_tensor)
+        loss.backward()
+
+    #test
+    test_output = mlp(test_encodings_tensor)
+    argmaxed_test_output = torch.argmax(test_output, dim=1)
+    total = argmaxed_test_output.size(0)
+    correct = (argmaxed_test_output == test_labels_tensor).sum().item()
+
+    print(f'acc = {correct / total}')
+
+
 
     #create scatter of encoded points, put through tsne
     # see: https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
