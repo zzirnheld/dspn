@@ -524,7 +524,7 @@ def main():
     test_labels_tensor = torch.cat((bkgd_test_encoding_label_tensor, sign_test_encoding_label_tensor))
 
     _, encoding_len = y_label.shape
-    mlp = dummymlp.MLP(embedding_dim=encoding_len, hidden_dim=20, label_dim=2)
+    mlp = dummymlp.MLP(embedding_dim=encoding_len, hidden_dim=20, label_dim=2).to('cuda:0')
     loss_func = nn.CrossEntropyLoss()
     #mlp.train()
 
