@@ -525,7 +525,7 @@ def main():
 
     _, encoding_len = y_label.shape
     mlp = dummymlp.MLP(embedding_dim=encoding_len, hidden_dim=20, label_dim=2).to('cuda:0')
-    loss_func = nn.CrossEntropyLoss()
+    loss_func = nn.CrossEntropyLoss().to('cuda:0')
     #mlp.train()
 
     epochs = 20
